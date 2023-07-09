@@ -1,0 +1,146 @@
+[gd_scene load_steps=9 format=3 uid="uid://cbx13aqwabcpo"]
+
+[ext_resource type="Script" path="res://data/board/board.gd" id="1_7ovl0"]
+[ext_resource type="Theme" uid="uid://0x6g5ep1aj63" path="res://data/main/theme.tres" id="1_vv2ub"]
+[ext_resource type="Texture2D" uid="uid://ba2jl6iv2h4yp" path="res://assets/sprites/bg.png" id="2_b3wmo"]
+[ext_resource type="PackedScene" uid="uid://djfh14j1f3uf6" path="res://data/paddle/paddle.tscn" id="2_rn645"]
+[ext_resource type="PackedScene" uid="uid://dgc6u1x8q22s5" path="res://data/ball/ball.tscn" id="3_4qemu"]
+[ext_resource type="PackedScene" uid="uid://b3bwigch82lxw" path="res://data/goal/goal.tscn" id="4_7ny26"]
+[ext_resource type="PackedScene" uid="uid://xhbdbeh7e2la" path="res://data/ball_detection/ball_detection.tscn" id="5_asorr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8dcru"]
+size = Vector2(512, 18)
+
+[node name="Board" type="Node2D"]
+script = ExtResource("1_7ovl0")
+
+[node name="BG" type="ColorRect" parent="."]
+offset_right = 480.0
+offset_bottom = 240.0
+color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(240, 120)
+texture = ExtResource("2_b3wmo")
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 237.0
+offset_top = 16.0
+offset_right = 245.0
+offset_bottom = 45.0
+theme = ExtResource("1_vv2ub")
+text = "-
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerScore" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 226.0
+offset_top = 16.0
+offset_right = 242.0
+offset_bottom = 45.0
+theme = ExtResource("1_vv2ub")
+text = "0"
+
+[node name="NPCScore" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 248.0
+offset_top = 16.0
+offset_right = 264.0
+offset_bottom = 45.0
+theme = ExtResource("1_vv2ub")
+text = "0"
+
+[node name="ScoreText" type="Label" parent="UI"]
+layout_mode = 0
+offset_left = 192.0
+offset_top = 56.0
+offset_right = 296.0
+offset_bottom = 85.0
+theme = ExtResource("1_vv2ub")
+text = "Player Scores"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayAgainButton" type="Button" parent="UI"]
+visible = false
+layout_mode = 0
+offset_left = 136.0
+offset_top = 200.0
+offset_right = 220.0
+offset_bottom = 234.0
+theme = ExtResource("1_vv2ub")
+text = "Play Again"
+
+[node name="QuitButton" type="Button" parent="UI"]
+visible = false
+layout_mode = 0
+offset_left = 256.0
+offset_top = 200.0
+offset_right = 344.0
+offset_bottom = 234.0
+theme = ExtResource("1_vv2ub")
+text = "Quit
+"
+
+[node name="Players" type="Node2D" parent="."]
+
+[node name="PaddlePlayer" parent="Players" instance=ExtResource("2_rn645")]
+position = Vector2(16, 120)
+
+[node name="PaddleNPC" parent="Players" instance=ExtResource("2_rn645")]
+position = Vector2(464, 120)
+PLAYER = false
+
+[node name="Ball" parent="Players" instance=ExtResource("3_4qemu")]
+position = Vector2(240, 120)
+
+[node name="BallDetection" parent="Players" instance=ExtResource("5_asorr")]
+position = Vector2(384, 120)
+
+[node name="Walls" type="StaticBody2D" parent="."]
+light_mask = 2
+visibility_layer = 2
+metadata/_edit_lock_ = true
+
+[node name="TopWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(240, -8)
+shape = SubResource("RectangleShape2D_8dcru")
+metadata/_edit_lock_ = true
+
+[node name="BottomWall" type="CollisionShape2D" parent="Walls"]
+position = Vector2(240, 248)
+shape = SubResource("RectangleShape2D_8dcru")
+metadata/_edit_lock_ = true
+
+[node name="PlayerGoal" parent="Walls" instance=ExtResource("4_7ny26")]
+position = Vector2(-8, 120)
+metadata/_edit_lock_ = true
+
+[node name="NPCGoal" parent="Walls" instance=ExtResource("4_7ny26")]
+position = Vector2(488, 120)
+metadata/_edit_lock_ = true
+
+[node name="ResetTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[connection signal="pressed" from="UI/PlayAgainButton" to="." method="_on_play_again_button_pressed"]
+[connection signal="pressed" from="UI/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="body_entered" from="Players/BallDetection" to="Players/PaddleNPC" method="_on_ball_detection_body_entered"]
+[connection signal="body_exited" from="Players/BallDetection" to="Players/PaddleNPC" method="_on_ball_detection_body_exited"]
+[connection signal="body_entered" from="Walls/PlayerGoal" to="." method="_on_player_goal_body_entered"]
+[connection signal="body_entered" from="Walls/NPCGoal" to="." method="_on_npc_goal_body_entered"]
+[connection signal="timeout" from="ResetTimer" to="." method="_on_reset_timer_timeout"]
+
+[editable path="Players/PaddlePlayer"]

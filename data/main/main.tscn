@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://bitny5u8q8k1u"]
+
+[ext_resource type="Theme" uid="uid://0x6g5ep1aj63" path="res://data/main/theme.tres" id="1_d58rp"]
+[ext_resource type="Script" path="res://data/main/main.gd" id="1_v6eqh"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_v6eqh")
+
+[node name="BG" type="ColorRect" parent="."]
+offset_right = 480.0
+offset_bottom = 242.0
+color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="."]
+offset_right = 480.0
+offset_bottom = 40.0
+theme = ExtResource("1_d58rp")
+theme_override_font_sizes/font_size = 32
+text = "Godot Pong
+
+Use Up and Down arrow keys to move"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="."]
+offset_left = 200.0
+offset_top = 176.0
+offset_right = 288.0
+offset_bottom = 210.0
+theme = ExtResource("1_d58rp")
+text = "Start
+"
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
